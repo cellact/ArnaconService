@@ -1,0 +1,13 @@
+{
+    "ENSRegistry": "0xb32Feb0530C73FEc90BB985fA40894196938a9f6",
+    "BaseRegistrarImplementation": "0x42E43F785A42bB1696c0a1A036cDe8c7d00d4f4C",
+    "ReverseRegistrar": "0x85FBec85C99b3A8d236e5c64e861f7E62Cdf2De8",
+    "StaticMetadataService": "0xADA2302c6F40269d6DcCd038F8b8B3c2FAe60dd3",
+    "NameWrapper": "0xeb20750987C515732AE4741946f6def43a0200Dd",
+    "PublicResolver": "0xB579f4c45e0CC62f2b4b3A75F23D883E6474A26B",
+    "SimplePriceOracle": "0x78b003C0d809F8e3FC57d8f37Ae2918dbc998512",
+    "ETHRegistrarController": "0x35D74fB7Dc2eA96730Eec42CDe06585D3b17D4c3",
+    "poseidon-solidity/PoseidonT3.sol:PoseidonT3": "0xF58959e3F862557397122cc2809df276b4C83352",
+    "SemaphoreVerifier": "0x6C42599435B82121794D835263C846384869502d",
+    "GlobalRegistrarController": "0xe6cCD9d4dBbb37412E34B75C6B5aD0425875Ecb6"
+}
