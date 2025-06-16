@@ -82,9 +82,36 @@ class ArnaconService {
 
             // SecondLevelInteractor ABI (minimal)
             const secondLevelInteractorABI = [
-                "function registerSubnodeAndMint(address owner, string calldata label, string calldata name, uint256 expiry) external returns (uint256)"
+                {
+                    "inputs": [
+                        {
+                            "internalType": "address",
+                            "name": "owner",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "string",
+                            "name": "label",
+                            "type": "string"
+                        },
+                        {
+                            "internalType": "string",
+                            "name": "name",
+                            "type": "string"
+                        },
+                        {
+                            "internalType": "uint64",
+                            "name": "expiry",
+                            "type": "uint64"
+                        }
+                    ],
+                    "name": "registerSubnodeAndMint",
+                    "outputs": [],
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                }            
             ];
-
+            console.log("settings contracts with signer address:", this.signer.address);
             const globalRegistrarController = new ethers.Contract(
                 this.contracts.GlobalRegistrarController,
                 globalRegistrarControllerABI,
@@ -145,8 +172,13 @@ class ArnaconService {
             console.log("interactor:", interactor.address);
             console.log(`Registering ${label}.${name}.global for ${ownerAddress} until ${new Date(expiry * 1000)}`);
             // Estimate gas
-            const gasEstimate = await interactor.estimateGas.registerSubnodeAndMint(ownerAddress, label, name, expiry);
-            const gasLimit = gasEstimate.mul(120).div(100); // Add 20% buffer
+            let gasLimit = 5000000;
+            try {
+                const gasEstimate = await interactor.estimateGas.registerSubnodeAndMint(ownerAddress, label, name, expiry);
+                gasLimit = gasEstimate.mul(120).div(100); // Add 20% buffer
+            } catch (error) {
+                throw new Error(`Error estimating gas: ${error}`);
+            }
 
             const txOptions = {
                 gasLimit,
@@ -170,7 +202,6 @@ class ArnaconService {
             };
 
         } catch (error) {
-            console.error("Failed to register subdomain:", error.message);
             throw new Error(`Registration failed: ${error.message}`);
         }
     }

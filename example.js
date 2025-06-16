@@ -1,3 +1,4 @@
+require('dotenv').config();
 const ArnaconService = require('./index');
 
 async function example() {
@@ -5,7 +6,7 @@ async function example() {
     try {
         // Initialize with your private key
         const privateKey = process.env.PRIVATE_KEY; // Replace with your actual private key
-        console.log("Initializing registrar...");
+        console.log("Initializing registrar..." + privateKey);
         const service = new ArnaconService(privateKey, null, false);
 
         const walletAddress = await service.init(privateKey);

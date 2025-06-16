@@ -1,33 +1,92 @@
-# Subdomain Registrar
+# ArnaconService
 
 A simple npm module for registering subdomains on the Arnacon ENS system.
 
 ## Installation
 
+### From GitHub (Recommended for development)
+
 ```bash
-npm install ./subdomain-registrar
+# Clone the repository
+git clone https://github.com/YOUR_USERNAME/ArnaconService.git
+cd ArnaconService
+
+# Install dependencies
+npm install
+
+# Copy environment example and configure
+cp .env.example .env
+# Edit .env with your private key
 ```
+
+### As an npm dependency
+
+```bash
+npm install git+https://github.com/matan-fridman/ArnaconService.git
+```
+
+## Quick Start
+
+1. **Setup Environment Variables**
+   ```bash
+   cp .env.example .env
+   ```
+   Edit `.env` and add your private key:
+   ```
+   PRIVATE_KEY=your_private_key_here_without_0x_prefix
+   ```
+
+2. **Run the Example**
+   ```bash
+   npm run example
+   ```
+
+3. **Use in Your Project**
+   ```javascript
+   const ArnaconService = require('arnacon-service');
+   
+   async function main() {
+       const service = new ArnaconService();
+       const walletAddress = await service.init(process.env.PRIVATE_KEY);
+       
+       // Register a subdomain
+       const result = await service.registerSubdomain(
+           "myapp",          // label
+           "example",        // parent domain
+           walletAddress,    // owner address
+           30               // duration in days
+       );
+       
+       console.log("Registration successful:", result);
+   }
+   
+   main().catch(console.error);
+   ```
 
 ## Usage
 
 ```javascript
-const SubdomainRegistrar = require('subdomain-registrar');
+const ArnaconService = require('arnacon-service');
 
 async function main() {
-    const registrar = new SubdomainRegistrar();
+    const service = new ArnaconService();
     
     // Initialize with private key
-    const privateKey = "your-private-key-here";
+    const privateKey = process.env.PRIVATE_KEY;
     const rpcUrl = "https://rpc-amoy.polygon.technology/"; // Optional, defaults to Polygon Amoy
     
-    await registrar.init(privateKey, rpcUrl);
+    const walletAddress = await service.init(privateKey, rpcUrl);
+    
+    // Get owned names
+    const names = await service.getOwnedNames();
+    console.log("Owned names:", names);
     
     // Register a subdomain
     try {
-        const result = await registrar.registerSubdomain(
+        const result = await service.registerSubdomain(
             "test",           // label (subdomain)
             "example",        // parent domain name  
-            "0x123...",       // owner address (optional, defaults to your wallet)
+            walletAddress,    // owner address (optional, defaults to your wallet)
             10                // duration in days (optional, defaults to 10)
         );
         
@@ -44,13 +103,13 @@ main();
 
 ## API Reference
 
-### `new SubdomainRegistrar()`
+### `new ArnaconService()`
 
-Creates a new instance of the subdomain registrar.
+Creates a new instance of the ArnaconService.
 
 ### `init(privateKey, rpcUrl?, contractAddresses?)`
 
-Initializes the registrar with a private key and network configuration.
+Initializes the ArnaconService with a private key and network configuration.
 
 **Parameters:**
 - `privateKey` (string): Private key for the wallet that will sign transactions
@@ -115,7 +174,7 @@ const contractAddresses = {
 ## Error Handling
 
 The module throws descriptive errors for common issues:
-- Registrar not initialized
+- ArnaconService not initialized
 - Missing required parameters
 - Contract not found
 - Transaction failures
