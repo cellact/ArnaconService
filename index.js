@@ -22,8 +22,9 @@ class ArnaconService {
     async init(privateKey, testnet, rpcUrl = null, contractAddresses = null) {
         try {
             // Set default RPC URL based on testnet flag
+            const network = testnet ? amoy : polygon;
             if (!rpcUrl) {
-                rpcUrl = testnet ? 'https://rpc-amoy.polygon.technology/' : 'https://polygon-bor-rpc.publicnode.com';
+                rpcUrl = network.rpcUrl;
             }
 
             // Setup provider and signer
@@ -35,7 +36,7 @@ class ArnaconService {
             if (!contractAddresses) {
                 
                 try {
-                    const network = testnet ? amoy : polygon;
+                    
                     this.contracts = network.contractAddresses;
                     console.log(`Loaded ${testnet ? 'testnet' : 'mainnet'} contract addresses from ${network}`);
                 } catch (fileError) {

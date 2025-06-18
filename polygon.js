@@ -1,4 +1,4 @@
-export const polygon = {
+const polygon = {
     rpcUrl: 'https://polygon-bor-rpc.publicnode.com',
     contractAddresses: {
         "ENSRegistry": "0x16742E546bF92118F7dfdbEF5170E44C47ae254b",
@@ -14,3 +14,5 @@ export const polygon = {
         "GlobalRegistrarController": "0xB2bDcCFfFa78D4f5488Ab382DE7a1Ea2f0F047F4"
       }
 };
+
+module.exports = { polygon };

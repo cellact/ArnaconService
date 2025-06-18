@@ -1,4 +1,4 @@
-export const amoy = {
+const amoy = {
     rpcUrl: 'https://rpc-amoy.polygon.technology/',
     contractAddresses: {
         "ENSRegistry": "0xb32Feb0530C73FEc90BB985fA40894196938a9f6",
@@ -19,3 +19,5 @@ export const amoy = {
         "ProductsNFT": "0x661d9ea4F9B2d395436BBB601a8856Bcd0B8dA57"
       }
 };
+
+module.exports = { amoy };
