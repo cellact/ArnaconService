@@ -6,7 +6,9 @@
   "files": [
     "index.js",
     "amoy-addresses.json",
-    "polygon-addresses.json"
+    "polygon-addresses.json",
+    "amoy.js",
+    "polygon.js"
   ],
   "scripts": {
     "test": "node example.js",
