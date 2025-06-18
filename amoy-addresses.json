@@ -9,5 +9,10 @@
     "ETHRegistrarController": "0x35D74fB7Dc2eA96730Eec42CDe06585D3b17D4c3",
     "poseidon-solidity/PoseidonT3.sol:PoseidonT3": "0xF58959e3F862557397122cc2809df276b4C83352",
     "SemaphoreVerifier": "0x6C42599435B82121794D835263C846384869502d",
-    "GlobalRegistrarController": "0xe6cCD9d4dBbb37412E34B75C6B5aD0425875Ecb6"
-}
+    "GlobalRegistrarController": "0xe6cCD9d4dBbb37412E34B75C6B5aD0425875Ecb6",
+    "SecondLevelController": "0xfe86D999605f9A2B65E9a3537Cea070a7aA5C4c0",
+    "SecondLevelInteractor": "0xB09c92078B355F911F25087dd1803e55adC610d4",
+    "ProductTypeRegistry": "0x75A2CD3B7F2248C81911Df41738b476c9083a31A",
+    "ArnaconResolver": "0x36b579adeaD9979eC10200455481B1F44872BaC3",
+    "ProductsNFT": "0x661d9ea4F9B2d395436BBB601a8856Bcd0B8dA57"
+  }

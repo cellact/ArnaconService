@@ -91,12 +91,17 @@ class ArnaconService {
                         },
                         {
                             "internalType": "string",
+                            "name": "name",
+                            "type": "string"
+                        },
+                        {
+                            "internalType": "string",
                             "name": "label",
                             "type": "string"
                         },
                         {
                             "internalType": "string",
-                            "name": "name",
+                            "name": "metadata",
                             "type": "string"
                         },
                         {
@@ -151,10 +156,10 @@ class ArnaconService {
      * @param {string} label - The subdomain label (e.g., "test" for test.example.global)
      * @param {string} name - The parent domain name (e.g., "example" for test.example.global)
      * @param {string} ownerAddress - Address that will own the subdomain (optional, defaults to signer address)
-     * @param {number} durationInDays - Duration in days for the registration (default: 10 days)
+     * @param {string} productType - Product type for the registration
      * @returns {object} Transaction result
      */
-    async registerSubdomain(label, name, ownerAddress, durationInDays = 10) {
+    async registerSubdomain(label, name, ownerAddress, productType, durationInDays = 10) {
         if (!this.signer) {
             throw new Error('Registrar not initialized. Call init() first.');
         }
@@ -162,22 +167,40 @@ class ArnaconService {
         if (!label || !name) {
             throw new Error('Label and name are required');
         }
-        // Calculate expiry timestamp
+
+        // Calculate expiry timestamp 10 days from now
         const expiry = Math.floor(Date.now() / 1000) + (durationInDays * 24 * 60 * 60);
 
         try {
             console.log("Getting interactor...");
-            // Use cached interactor if available for signer's address, otherwise fetch
-            const interactor = this.secondLevelInteractor 
+            // Use cached interactor if available for signer's address
+            const interactor = this.secondLevelInteractor;
             console.log("interactor:", interactor.address);
-            console.log(`Registering ${label}.${name}.global for ${ownerAddress} until ${new Date(expiry * 1000)}`);
+            console.log(`Registering ${label}.${name}.global for ${ownerAddress || 'current signer'} until ${new Date(expiry * 1000)}`);
+            
+            // Get ProductTypeRegistry address (assuming it's in contracts)
+            const productTypeRegistryAddress = this.contracts.ProductTypeRegistry || "0x0000000000000000000000000000000000000000";
+            
+            // Create metadata for on-chain storage (full JSON keys for flexibility)
+            const metadata = JSON.stringify({
+                name: `${label}.${name}.global`,
+                number: label,
+                productType: productType,
+                typeRegistry: productTypeRegistryAddress,
+                description: "Domain + product service",
+                expiry: expiry,
+                registrationTimestamp: Math.floor(Date.now() / 1000),
+                category: "domain",
+                version: "1.0"
+            });
+
             // Estimate gas
             let gasLimit = 5000000;
             try {
-                const gasEstimate = await interactor.estimateGas.registerSubnodeAndMint(ownerAddress, label, name, expiry);
+                const gasEstimate = await interactor.estimateGas.registerSubnodeAndMint(ownerAddress, name, label, metadata, expiry);
                 gasLimit = gasEstimate.mul(120).div(100); // Add 20% buffer
             } catch (error) {
-                throw new Error(`Error estimating gas: ${error}`);
+                console.warn(`Error estimating gas, using default: ${error.message}`);
             }
 
             const txOptions = {
@@ -186,7 +209,8 @@ class ArnaconService {
                 maxFeePerGas: ethers.BigNumber.from("50000000000")          // 50 gwei
             };
 
-            const registerTx = await interactor.registerSubnodeAndMint(ownerAddress, label, name, expiry, txOptions);
+            console.log(`Registering subdomain ${label}.${name}.global`);
+            const registerTx = await interactor.registerSubnodeAndMint(ownerAddress, name, label, metadata, expiry, txOptions);
             console.log("Registering subdomain...", registerTx.hash);
             
             const receipt = await registerTx.wait();
@@ -198,7 +222,8 @@ class ArnaconService {
                 owner: ownerAddress,
                 expiry: new Date(expiry * 1000),
                 transactionHash: registerTx.hash,
-                blockNumber: receipt.blockNumber
+                blockNumber: receipt.blockNumber,
+                metadata: JSON.parse(metadata)
             };
 
         } catch (error) {
