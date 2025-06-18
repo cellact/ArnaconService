@@ -3,32 +3,6 @@ const { namehash } = require('ethers/lib/utils');
 const fs = require('fs');
 const path = require('path');
 
-// Helper function to get the directory of this module
-function getModuleDirectory() {
-    // Try __dirname first (CommonJS)
-    if (typeof __dirname !== 'undefined') {
-        return __dirname;
-    }
-    
-    // Fallback when __dirname is undefined (e.g., when used as npm dependency)
-    try {
-        // Use module.filename as a fallback
-        if (typeof module !== 'undefined' && module.filename) {
-            return path.dirname(module.filename);
-        }
-    } catch (err) {
-        // Try to find this module in node_modules
-        try {
-            const modulePath = require.resolve('arnacon-service/package.json');
-            return path.dirname(modulePath);
-        } catch (e) {
-            // Final fallback: use current working directory
-            console.warn('Unable to determine module directory, using current working directory');
-            return process.cwd();
-        }
-    }
-}
-
 class ArnaconService {
     constructor() {
         this.signer = null;
@@ -60,8 +34,7 @@ class ArnaconService {
             // Load contract addresses from file if not provided
             if (!contractAddresses) {
                 const addressesFile = testnet ? 'amoy-addresses.json' : 'polygon-addresses.json';
-                const moduleDir = getModuleDirectory();
-                const addressesPath = path.join(moduleDir, addressesFile);
+                const addressesPath = "./" + addressesFile;
                 
                 try {
                     const addressesData = fs.readFileSync(addressesPath, 'utf8');
