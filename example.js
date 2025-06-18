@@ -14,7 +14,6 @@ async function example() {
         
         const names = await service.getOwnedNames();
         console.log("Names:", names);
-
         // Register a subdomain
         const label = "hello";           // This will create myapp.example.global
         const parentName = "final";     // The parent domain (should already be registered)

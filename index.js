@@ -1,7 +1,7 @@
 const { ethers } = require('ethers');
 const { namehash } = require('ethers/lib/utils');
-const fs = require('fs');
-const path = require('path');
+const {amoy} = require('./amoy');
+const {polygon} = require('./polygon');
 
 class ArnaconService {
     constructor() {
@@ -33,15 +33,13 @@ class ArnaconService {
             
             // Load contract addresses from file if not provided
             if (!contractAddresses) {
-                const addressesFile = testnet ? 'amoy-addresses.json' : 'polygon-addresses.json';
-                const addressesPath = "./" + addressesFile;
                 
                 try {
-                    const addressesData = fs.readFileSync(addressesPath, 'utf8');
-                    this.contracts = JSON.parse(addressesData);
-                    console.log(`Loaded ${testnet ? 'testnet' : 'mainnet'} contract addresses from ${addressesFile}`);
+                    const network = testnet ? amoy : polygon;
+                    this.contracts = network.contractAddresses;
+                    console.log(`Loaded ${testnet ? 'testnet' : 'mainnet'} contract addresses from ${network}`);
                 } catch (fileError) {
-                    console.warn(`Could not load contract addresses from ${addressesFile}: ${fileError.message}`);
+                    console.warn(`Could not load contract addresses from ${network}: ${fileError.message}`);
                     this.contracts = {};
                 }
             } else {
