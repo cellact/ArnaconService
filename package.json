@@ -3,6 +3,11 @@
   "version": "1.0.0",
   "description": "A simple npm module for registering subdomains on the Arnacon ENS system",
   "main": "index.js",
+  "files": [
+    "index.js",
+    "amoy-addresses.json",
+    "polygon-addresses.json"
+  ],
   "scripts": {
     "test": "node example.js",
     "example": "node example.js"
