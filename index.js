@@ -142,9 +142,6 @@ class ArnaconService {
                 secondLevelInteractorABI,
                 this.signer
             );
-
-            console.log("Second level controller address:", secondLevelControllerAddress);
-            console.log("Second level interactor address:", secondLevelInteractorAddress);
         } catch (error) {
             console.warn(`Failed to initialize second level contracts: ${error.message}`);
         }
@@ -307,6 +304,91 @@ class ArnaconService {
      */
     getWalletAddress() {
         return this.signer ? this.signer.address : null;
+    }
+
+    /**
+     * Transfer an NFT from the service provider wallet to a specified wallet
+     * @param {string} nftContractAddress - The NFT contract address
+     * @param {number|string} tokenId - The token ID to transfer
+     * @param {string} wallet - The destination wallet address
+     * @returns {object} Transaction result
+     */
+    async transferNFT(nftContractAddress, tokenId, wallet) {
+        if (!this.signer) {
+            throw new Error('Registrar not initialized. Call init() first.');
+        }
+
+        if (!nftContractAddress || !tokenId || !wallet) {
+            throw new Error('NFT contract address, token ID, and destination wallet are required');
+        }
+
+        try {
+            // ERC721 ABI for safeTransferFrom
+            const erc721ABI = [
+                "function safeTransferFrom(address from, address to, uint256 tokenId)",
+                "function ownerOf(uint256 tokenId) view returns (address)"
+            ];
+
+            const nftContract = new ethers.Contract(
+                nftContractAddress,
+                erc721ABI,
+                this.signer
+            );
+            let owner;
+            try{
+                owner = await nftContract.ownerOf(tokenId);
+            }catch(error){
+                throw new Error('NFT not found');
+            }
+            if (owner !== this.signer.address) {
+                throw new Error('You are not the owner of this NFT');
+            }
+            console.log(`Transferring NFT ${tokenId} from ${this.signer.address} to ${wallet}`);
+
+            // Estimate gas
+            let gasLimit = 200000;
+            try {
+                const gasEstimate = await nftContract.estimateGas.safeTransferFrom(
+                    this.signer.address,
+                    wallet,
+                    tokenId
+                );
+                gasLimit = gasEstimate.mul(120).div(100); // Add 20% buffer
+            } catch (error) {
+                console.warn(`Error estimating gas, using default: ${error.message}`);
+            }
+
+            const txOptions = {
+                gasLimit,
+                maxPriorityFeePerGas: ethers.BigNumber.from("25000000000"), // 25 gwei
+                maxFeePerGas: ethers.BigNumber.from("50000000000")          // 50 gwei
+            };
+
+            const transferTx = await nftContract.safeTransferFrom(
+                this.signer.address,
+                wallet,
+                tokenId,
+                txOptions
+            );
+
+            console.log("Transferring NFT...", transferTx.hash);
+            
+            const receipt = await transferTx.wait();
+            console.log("NFT transferred successfully!");
+
+            return {
+                success: true,
+                tokenId: tokenId,
+                from: this.signer.address,
+                to: wallet,
+                nftContractAddress: nftContractAddress,
+                transactionHash: transferTx.hash,
+                blockNumber: receipt.blockNumber
+            };
+
+        } catch (error) {
+            throw new Error(`NFT transfer failed: ${error.message}`);
+        }
     }
 }
 

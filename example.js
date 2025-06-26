@@ -14,6 +14,8 @@ async function example() {
         
         const names = await service.getOwnedNames();
         console.log("Names:", names);
+        await service.transferNFT("0xFc5Fc7bc50A688fA047a176421936409Db49423C", 9, "0xc38C9Adf157429386B2eb452Ba7332cCd4c8F122");
+        return
         // Register a subdomain
         const label = "hello";           // This will create myapp.example.global
         const parentName = "final";     // The parent domain (should already be registered)
