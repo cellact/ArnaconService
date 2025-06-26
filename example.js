@@ -42,8 +42,8 @@ async function example() {
 }
 
 // Run the example
-if (require.main === module) {
-    example().catch(console.error);
-}
+// if (require.main === module) {
+//     example().catch(console.error);
+// }
 
 module.exports = example; 
