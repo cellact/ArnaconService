@@ -99,6 +99,39 @@ class ArnaconService {
                             "type": "string"
                         },
                         {
+                            "internalType": "uint256",
+                            "name": "timestamp",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "bytes",
+                            "name": "signature",
+                            "type": "bytes"
+                        }
+                    ],
+                    "name": "verifyProductAndRegister",
+                    "outputs": [],
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "address",
+                            "name": "owner",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "string",
+                            "name": "name",
+                            "type": "string"
+                        },
+                        {
+                            "internalType": "string",
+                            "name": "label",
+                            "type": "string"
+                        },
+                        {
                             "internalType": "string",
                             "name": "metadata",
                             "type": "string"
@@ -113,7 +146,7 @@ class ArnaconService {
                     "outputs": [],
                     "stateMutability": "nonpayable",
                     "type": "function"
-                }            
+                }
             ];
             console.log("settings contracts with signer address:", this.signer.address);
             const globalRegistrarController = new ethers.Contract(
@@ -388,6 +421,82 @@ class ArnaconService {
 
         } catch (error) {
             throw new Error(`NFT transfer failed: ${error.message}`);
+        }
+    }
+
+    /**
+     * Verify product and register subdomain with signature verification
+     * @param {string} owner - The owner address for the subdomain
+     * @param {string} name - The parent domain name (e.g., "example" for test.example.global)
+     * @param {string} label - The subdomain label (e.g., "test" for test.example.global)
+     * @param {number} timestamp - The timestamp for signature verification
+     * @param {string} signature - The signature for verification
+     * @returns {object} Transaction result
+     */
+    async verifyProductAndRegister(owner, name, label, timestamp, signature) {
+        if (!this.signer) {
+            throw new Error('Registrar not initialized. Call init() first.');
+        }
+
+        if (!owner || !name || !label || !timestamp || !signature) {
+            throw new Error('Owner, name, label, timestamp, and signature are required');
+        }
+
+        if (!this.secondLevelInteractor) {
+            throw new Error('Second level interactor not initialized. Call init() first.');
+        }
+
+        try {
+
+            console.log(`Verifying product and registering ${label}.${name}.global for ${owner}`);
+            console.log(`Timestamp: ${timestamp}, Signature: ${signature}`);
+
+            // Estimate gas
+            let gasLimit = 5000000;
+            try {
+                const gasEstimate = await this.secondLevelInteractor.estimateGas.verifyProductAndRegister(
+                    owner,
+                    name,
+                    label,
+                    timestamp,
+                    signature
+                );
+                gasLimit = gasEstimate.mul(120).div(100); // Add 20% buffer
+            } catch (error) {
+                console.warn(`Error estimating gas, using default: ${error.message}`);
+            }
+
+            const txOptions = {
+                gasLimit,
+                maxPriorityFeePerGas: ethers.BigNumber.from("25000000000"), // 25 gwei
+                maxFeePerGas: ethers.BigNumber.from("50000000000")          // 50 gwei
+            };
+
+            const verifyTx = await this.secondLevelInteractor.verifyProductAndRegister(
+                owner,
+                name,
+                label,
+                timestamp,
+                signature,
+                txOptions
+            );
+
+            console.log("Verifying product and registering...", verifyTx.hash);
+            
+            const receipt = await verifyTx.wait();
+            console.log("Product verified and subdomain registered successfully!");
+
+            return {
+                success: true,
+                subdomain: `${label}.${name}.global`,
+                owner: owner,
+                timestamp: timestamp,
+                transactionHash: verifyTx.hash,
+                blockNumber: receipt.blockNumber
+            };
+
+        } catch (error) {
+            throw new Error(`Product verification and registration failed: ${error.message}`);
         }
     }
 }

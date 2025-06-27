@@ -14,7 +14,9 @@ async function example() {
         
         const names = await service.getOwnedNames();
         console.log("Names:", names);
-        await service.transferNFT("0xFc5Fc7bc50A688fA047a176421936409Db49423C", 9, "0xc38C9Adf157429386B2eb452Ba7332cCd4c8F122");
+        const timestamp = 1750945366
+        const signature = "0x993890f5f53d7c5ca7f9796aa4c4b562e0fbfe8df3ab0e708cf8ce5aad85eac970cbc16f3182ffa69498e9f049825de61ed4b9a1b52ee8a61f4853aec00d94e91c"
+        await service.verifyProductAndRegister("0xc38C9Adf157429386B2eb452Ba7332cCd4c8F122", "cellact", "0612345678", timestamp, signature);
         return
         // Register a subdomain
         const label = "hello";           // This will create myapp.example.global
