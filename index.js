@@ -85,7 +85,12 @@ class ArnaconService {
                     "inputs": [
                         {
                             "internalType": "address",
-                            "name": "owner",
+                            "name": "signer",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "receiver",
                             "type": "address"
                         },
                         {
@@ -109,7 +114,7 @@ class ArnaconService {
                             "type": "bytes"
                         }
                     ],
-                    "name": "verifyProductAndRegister",
+                    "name": "verifyProductAndActivate",
                     "outputs": [],
                     "stateMutability": "nonpayable",
                     "type": "function"
@@ -433,13 +438,13 @@ class ArnaconService {
      * @param {string} signature - The signature for verification
      * @returns {object} Transaction result
      */
-    async verifyProductAndRegister(owner, name, label, timestamp, signature) {
+    async verifyProductAndActivate(receiver, name, label, timestamp, signature) {
         if (!this.signer) {
             throw new Error('Registrar not initialized. Call init() first.');
         }
 
-        if (!owner || !name || !label || !timestamp || !signature) {
-            throw new Error('Owner, name, label, timestamp, and signature are required');
+        if (!receiver || !name || !label || !timestamp || !signature) {
+            throw new Error('Receiver, name, label, timestamp, and signature are required');
         }
 
         if (!this.secondLevelInteractor) {
@@ -448,14 +453,16 @@ class ArnaconService {
 
         try {
 
-            console.log(`Verifying product and registering ${label}.${name}.global for ${owner}`);
+            console.log(`Verifying product and registering ${label}.${name}.global for ${receiver}`);
             console.log(`Timestamp: ${timestamp}, Signature: ${signature}`);
+            console.log("interactor:", this.secondLevelInteractor.address);
 
             // Estimate gas
             let gasLimit = 5000000;
             try {
-                const gasEstimate = await this.secondLevelInteractor.estimateGas.verifyProductAndRegister(
-                    owner,
+                const gasEstimate = await this.secondLevelInteractor.estimateGas.verifyProductAndActivate(
+                    receiver,
+                    receiver,
                     name,
                     label,
                     timestamp,
@@ -472,8 +479,9 @@ class ArnaconService {
                 maxFeePerGas: ethers.BigNumber.from("50000000000")          // 50 gwei
             };
 
-            const verifyTx = await this.secondLevelInteractor.verifyProductAndRegister(
-                owner,
+            const verifyTx = await this.secondLevelInteractor.verifyProductAndActivate(
+                receiver,
+                receiver,
                 name,
                 label,
                 timestamp,
@@ -489,7 +497,7 @@ class ArnaconService {
             return {
                 success: true,
                 subdomain: `${label}.${name}.global`,
-                owner: owner,
+                receiver: receiver,
                 timestamp: timestamp,
                 transactionHash: verifyTx.hash,
                 blockNumber: receipt.blockNumber
