@@ -12,12 +12,12 @@ const amoy = {
       "poseidon-solidity/PoseidonT3.sol:PoseidonT3": "0xF58959e3F862557397122cc2809df276b4C83352",
       "SemaphoreVerifier": "0x6C42599435B82121794D835263C846384869502d",
       "SignatureVerifier": "0x636657410AFb97bfB284106a06Fe3Fe274cAc371",
-      "GlobalRegistrarController": "0x941e2d34043511e433949Cf748d94Dc4711b23e3",
-      "ProvisionRegistry": "0x0623CD460Bcf07A94f1b54Ea203f014Ed1121E2f",
-      "SecondLevelInteractor": "0x6b07600D77237Ffd9158F6af290010Fc0ff443F0",
-      "ArnaconResolver": "0x752c3428e8443A0e8F0fC10194b1076c98Bc54b4",
-      "SecondLevelController": "0xA679f8eD9eF0Ca064a8560C7c561cD33791AF2f8",
-      "ProductsNFT": "0x1A971D3581a7e546928960337980623bA127Af61"
+      "GlobalRegistrarController": "0x69e3B655500161422f32F603eEa5D1346c80A0E0",
+      "ProvisionRegistry": "0x6BAbfb4af25Ce204CfF26aCF4A75d32C4Af4Ff7A",
+      "SecondLevelInteractor": "0x5eBe12FeAD669Dfe9dCA538DF77770b6B04d5447",
+      "ArnaconResolver": "0x83147f04aE45e8956f01b6dD2623C43b32282868",
+      "SecondLevelController": "0xd4bB2C2C357c46d4f46A5969341b067e15a28324",
+      "ProductsNFT": "0xd1A8a9D271daaa1247e70234ed17AD526700b21b"
     }
 };
 
