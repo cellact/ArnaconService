@@ -14,6 +14,7 @@ async function example() {
         
         const names = await service.getOwnedNames();
         console.log("Names:", names);
+        await service.transferNFT("0x6633D58054A80249cC9178E73D4F4373ADd76Ae4", 0, "0x2c859fcBEbfD1f49854c6131d33A45FdeCC5055e");
         return
         const timestamp = 1751293248
         const signature = ""

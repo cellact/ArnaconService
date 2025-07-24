@@ -371,7 +371,7 @@ class ArnaconService {
             throw new Error('Registrar not initialized. Call init() first.');
         }
 
-        if (!nftContractAddress || !tokenId || !wallet) {
+        if (!nftContractAddress || (!tokenId && tokenId !== 0) || !wallet) {
             throw new Error('NFT contract address, token ID, and destination wallet are required');
         }
 
@@ -413,8 +413,8 @@ class ArnaconService {
 
             const txOptions = {
                 gasLimit,
-                maxPriorityFeePerGas: ethers.BigNumber.from("25000000000"), // 25 gwei
-                maxFeePerGas: ethers.BigNumber.from("50000000000")          // 50 gwei
+                maxPriorityFeePerGas: ethers.BigNumber.from("50000000000"), // 50 gwei
+                maxFeePerGas: ethers.BigNumber.from("100000000000")          // 100 gwei
             };
 
             const transferTx = await nftContract.safeTransferFrom(
@@ -490,8 +490,8 @@ class ArnaconService {
 
             const txOptions = {
                 gasLimit,
-                maxPriorityFeePerGas: ethers.BigNumber.from("25000000000"), // 25 gwei
-                maxFeePerGas: ethers.BigNumber.from("50000000000")          // 50 gwei
+                maxPriorityFeePerGas: ethers.BigNumber.from("50000000000"), // 50 gwei
+                maxFeePerGas: ethers.BigNumber.from("100000000000")          // 100 gwei
             };
 
             const verifyTx = await this.secondLevelInteractor.verifyProductAndActivate(
