@@ -1,14 +1,16 @@
 {
   "name": "arnacon-service",
-  "version": "1.0.5",
+  "version": "1.0.8",
   "description": "A simple npm module for registering subdomains on the Arnacon ENS system",
   "main": "index.js",
   "files": [
     "index.js",
+    "networks.js",
     "amoy-addresses.json",
     "polygon-addresses.json",
     "amoy.js",
-    "polygon.js"
+    "polygon.js",
+    "sapphire-testnet.js"
   ],
   "scripts": {
     "test": "node example.js",
