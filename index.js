@@ -10,6 +10,7 @@ class ArnaconService {
         this.secondLevelController = null;
         this.secondLevelInteractor = null;
         this.chainId = null;
+        this.gasMultiplier = 120;
     }
 
     /**
@@ -53,6 +54,11 @@ class ArnaconService {
 
             console.log(`Initialized with wallet address: ${this.signer.address}`);
             console.log(`Chain ID: ${chainId}`);
+
+            if(this.chainId === 23295){
+                this.gasMultiplier = 300;
+            }
+
             return this.signer.address;
         } catch (error) {
             throw new Error(`Failed to initialize: ${error.message}`);
@@ -233,7 +239,7 @@ class ArnaconService {
             let gasLimit = 5000000;
             try {
                 const gasEstimate = await interactor.estimateGas.registerSubnodeAndMint(ownerAddress, name, label, metadata, expiry);
-                gasLimit = gasEstimate.mul(120).div(100); // Add 20% buffer
+                gasLimit = gasEstimate.mul(this.gasMultiplier).div(100); // Add 20% buffer
             } catch (error) {
                 console.warn(`Error estimating gas, using default: ${error.message}`);
             }
@@ -400,7 +406,7 @@ class ArnaconService {
                     wallet,
                     tokenId
                 );
-                gasLimit = gasEstimate.mul(120).div(100); // Add 20% buffer
+                gasLimit = gasEstimate.mul(this.gasMultiplier).div(100); // Add 20% buffer
             } catch (error) {
                 console.warn(`Error estimating gas, using default: ${error.message}`);
             }
@@ -477,7 +483,7 @@ class ArnaconService {
                     timestamp,
                     signature
                 );
-                gasLimit = gasEstimate.mul(120).div(100); // Add 20% buffer
+                gasLimit = gasEstimate.mul(this.gasMultiplier).div(100); // Add 20% buffer
             } catch (error) {
                 console.warn(`Error estimating gas, using default: ${error.message}`);
             }
