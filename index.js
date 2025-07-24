@@ -1,7 +1,6 @@
 const { ethers } = require('ethers');
 const { namehash } = require('ethers/lib/utils');
-const {amoy} = require('./amoy');
-const {polygon} = require('./polygon');
+const { getNetworkByChainId } = require('./networks');
 
 class ArnaconService {
     constructor() {
@@ -10,19 +9,23 @@ class ArnaconService {
         this.contracts = {};
         this.secondLevelController = null;
         this.secondLevelInteractor = null;
+        this.chainId = null;
     }
 
     /**
-     * Initialize the registrar with a private key and RPC URL
+     * Initialize the registrar with a private key and chainId
      * @param {string} privateKey - Private key for the wallet
-     * @param {string} rpcUrl - RPC URL for the blockchain network (optional, will be set based on testnet flag)
-     * @param {boolean} testnet - Whether to use testnet configuration (default: true)
-     * @param {object} contractAddresses - Object containing contract addresses (optional, will be loaded based on testnet flag)
+     * @param {number} chainId - Chain ID for the blockchain network
+     * @param {string} rpcUrl - RPC URL for the blockchain network (optional, will be set based on chainId)
+     * @param {object} contractAddresses - Object containing contract addresses (optional, will be loaded based on chainId)
      */
-    async init(privateKey, testnet, rpcUrl = null, contractAddresses = null) {
+    async init(privateKey, chainId, rpcUrl = null, contractAddresses = null) {
         try {
-            // Set default RPC URL based on testnet flag
-            const network = testnet ? amoy : polygon;
+            // Get network configuration based on chainId
+            const network = getNetworkByChainId(chainId);
+            this.chainId = chainId;
+            
+            // Set default RPC URL based on chainId if not provided
             if (!rpcUrl) {
                 rpcUrl = network.rpcUrl;
             }
@@ -32,15 +35,13 @@ class ArnaconService {
             this.signer = new ethers.Wallet(privateKey, this.provider);
             console.log("Signer:", this.signer.address);
             
-            // Load contract addresses from file if not provided
+            // Load contract addresses from network config if not provided
             if (!contractAddresses) {
-                
                 try {
-                    
                     this.contracts = network.contractAddresses;
-                    console.log(`Loaded ${testnet ? 'testnet' : 'mainnet'} contract addresses from ${network}`);
+                    console.log(`Loaded contract addresses for chainId ${chainId}`);
                 } catch (fileError) {
-                    console.warn(`Could not load contract addresses from ${network}: ${fileError.message}`);
+                    console.warn(`Could not load contract addresses for chainId ${chainId}: ${fileError.message}`);
                     this.contracts = {};
                 }
             } else {
@@ -51,7 +52,7 @@ class ArnaconService {
             await this._initializeSecondLevelContracts();
 
             console.log(`Initialized with wallet address: ${this.signer.address}`);
-            console.log(`Network: ${testnet ? 'Testnet (Amoy)' : 'Mainnet (Polygon)'}`);
+            console.log(`Chain ID: ${chainId}`);
             return this.signer.address;
         } catch (error) {
             throw new Error(`Failed to initialize: ${error.message}`);
@@ -334,6 +335,14 @@ class ArnaconService {
      */
     setContractAddresses(addresses) {
         this.contracts = { ...this.contracts, ...addresses };
+    }
+
+    /**
+     * Get current chain ID
+     * @returns {number} Chain ID
+     */
+    getChainId() {
+        return this.chainId;
     }
 
     /**

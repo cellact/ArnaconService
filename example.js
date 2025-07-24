@@ -9,15 +9,15 @@ async function example() {
         console.log("Initializing registrar..." + privateKey);
         const service = new ArnaconService();
 
-        const walletAddress = await service.init(privateKey, true);
+        const walletAddress = await service.init(privateKey, 23295);
         console.log("Initialized with wallet:", walletAddress);
         
         const names = await service.getOwnedNames();
         console.log("Names:", names);
+        return
         const timestamp = 1751293248
         const signature = ""
         await service.verifyProductAndActivate("0x2c859fcBEbfD1f49854c6131d33A45FdeCC5055e", "cellact", "5555555545", timestamp, signature);
-        return
         // Register a subdomain
         const label = "hello";           // This will create myapp.example.global
         const parentName = "final";     // The parent domain (should already be registered)
