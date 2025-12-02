@@ -55,8 +55,9 @@ class ArnaconService {
             console.log(`Initialized with wallet address: ${this.signer.address}`);
             console.log(`Chain ID: ${chainId}`);
 
-            if(this.chainId === 23295){
-                this.gasMultiplier = 300;
+            if(chainId === 23295 || chainId === "23295"){
+                console.log("setting gas multiplier to 40");
+                this.gasMultiplier = 40;
             }
 
             return this.signer.address;
@@ -128,37 +129,32 @@ class ArnaconService {
                 },
                 {
                     "inputs": [
-                        {
-                            "internalType": "address",
-                            "name": "owner",
-                            "type": "address"
-                        },
-                        {
-                            "internalType": "string",
-                            "name": "name",
-                            "type": "string"
-                        },
-                        {
-                            "internalType": "string",
-                            "name": "label",
-                            "type": "string"
-                        },
-                        {
-                            "internalType": "string",
-                            "name": "metadata",
-                            "type": "string"
-                        },
-                        {
-                            "internalType": "uint64",
-                            "name": "expiry",
-                            "type": "uint64"
-                        }
+                      {
+                        "internalType": "address",
+                        "name": "owner",
+                        "type": "address"
+                      },
+                      {
+                        "internalType": "string",
+                        "name": "label",
+                        "type": "string"
+                      },
+                      {
+                        "internalType": "string",
+                        "name": "name",
+                        "type": "string"
+                      },
+                      {
+                        "internalType": "uint64",
+                        "name": "expiry",
+                        "type": "uint64"
+                      }
                     ],
-                    "name": "registerSubnodeAndMint",
+                    "name": "registerSubnodeRecord",
                     "outputs": [],
                     "stateMutability": "nonpayable",
                     "type": "function"
-                }
+                  }
             ];
             console.log("settings contracts with signer address:", this.signer.address);
             const globalRegistrarController = new ethers.Contract(
@@ -200,7 +196,7 @@ class ArnaconService {
      * @param {string} productType - Product type for the registration
      * @returns {object} Transaction result
      */
-    async registerSubdomain(label, name, ownerAddress, productType, durationInDays = 10) {
+    async registerSubdomain(label, name, ownerAddress, durationInDays = 10) {
         if (!this.signer) {
             throw new Error('Registrar not initialized. Call init() first.');
         }
@@ -219,39 +215,24 @@ class ArnaconService {
             console.log("interactor:", interactor.address);
             console.log(`Registering ${label}.${name}.global for ${ownerAddress || 'current signer'} until ${new Date(expiry * 1000)}`);
             
-            // Get ProductTypeRegistry address (assuming it's in contracts)
-            const productTypeRegistryAddress = this.contracts.ProductTypeRegistry || "0x0000000000000000000000000000000000000000";
-            
-            // Create metadata for on-chain storage (full JSON keys for flexibility)
-            const metadata = JSON.stringify({
-                name: `${label}.${name}.global`,
-                number: label,
-                productType: productType,
-                typeRegistry: productTypeRegistryAddress,
-                description: "Domain + product service",
-                expiry: expiry,
-                registrationTimestamp: Math.floor(Date.now() / 1000),
-                category: "domain",
-                version: "1.0"
-            });
 
             // Estimate gas
             let gasLimit = 5000000;
             try {
-                const gasEstimate = await interactor.estimateGas.registerSubnodeAndMint(ownerAddress, name, label, metadata, expiry);
+                const gasEstimate = await interactor.estimateGas.registerSubnodeRecord(ownerAddress, label, name, expiry);
                 gasLimit = gasEstimate.mul(this.gasMultiplier).div(100); // Add 20% buffer
             } catch (error) {
                 console.warn(`Error estimating gas, using default: ${error.message}`);
             }
-
+            console.log("gasLimit:", gasLimit.toString(), this.gasMultiplier);
             const txOptions = {
                 gasLimit,
-                maxPriorityFeePerGas: ethers.BigNumber.from("25000000000"), // 25 gwei
-                maxFeePerGas: ethers.BigNumber.from("50000000000")          // 50 gwei
+                maxPriorityFeePerGas: this.chainId === 23295 || this.chainId === "23295" ? ethers.BigNumber.from("100000000000000") : ethers.BigNumber.from("25000000000"), // 1000 gwei or 25 gwei
+                maxFeePerGas: this.chainId === 23295 || this.chainId === "23295" ? ethers.BigNumber.from("200000000000000") : ethers.BigNumber.from("50000000000")          // 2000 gwei or 50 gwei
             };
 
             console.log(`Registering subdomain ${label}.${name}.global`);
-            const registerTx = await interactor.registerSubnodeAndMint(ownerAddress, name, label, metadata, expiry, txOptions);
+            const registerTx = await interactor.registerSubnodeRecord(ownerAddress, label, name, expiry, txOptions);
             console.log("Registering subdomain...", registerTx.hash);
             
             const receipt = await registerTx.wait();
@@ -263,8 +244,7 @@ class ArnaconService {
                 owner: ownerAddress,
                 expiry: new Date(expiry * 1000),
                 transactionHash: registerTx.hash,
-                blockNumber: receipt.blockNumber,
-                metadata: JSON.parse(metadata)
+                blockNumber: receipt.blockNumber
             };
 
         } catch (error) {

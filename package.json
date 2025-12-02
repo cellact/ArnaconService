@@ -1,6 +1,6 @@
 {
   "name": "arnacon-service",
-  "version": "1.0.9",
+  "version": "1.0.16",
   "description": "A simple npm module for registering subdomains on the Arnacon ENS system",
   "main": "index.js",
   "files": [

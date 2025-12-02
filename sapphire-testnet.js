@@ -1,22 +1,22 @@
 const sapphireTestnet = {
     rpcUrl: 'https://testnet.sapphire.oasis.io',
     contractAddresses: {
-        "ENSRegistry": "0xB923ba5dFe71C4ceBB708a0F11Ffe523663fB2dE",
-        "BaseRegistrarImplementation": "0xc71dde4609e834114f8C8F82FB3152b07E6e9c5D",
-        "ReverseRegistrar": "0xE230335Df6d4880D5AAD1c449Cc08defEaa6344F",
-        "StaticMetadataService": "0x6313FC52F99342e053C80d15681D07b7E5555631",
-        "NameWrapper": "0xf207CFa77a7aA2b236eDCBb38587761E98150e3a",
-        "PublicResolver": "0x964bA9491b288Fd128412b9E283Ae2b7D35c3a01",
-        "SimplePriceOracle": "0x0f581b7bA7584656835d1410866394a4d27382AD",
-        "ETHRegistrarController": "0x46451091a78CEA5D8e89d839dCf7c159b9B6f529",
-        "GlobalRegistrarController": "0x45d59681B23C078be403E8E4bF5da283425BbA83",
-        "ProvisionRegistry": "0xe75ad754c34BE2F28AeD2811FEeA338E04B0088a",
-        "SignatureVerifier": "0xC19500685344169CAa21375c99b6ddc110C95b69",
-        "SecondLevelInteractor": "0x7bb5EC4Be4D6e552874054427b585821B4143C49",
-        "ArnaconResolver": "0x9a9cf53F45600feF01dCbf796a4C2fd0c42Ce136",
-        "SecondLevelController": "0xfAe42d6E0D1fdA6bEc315Fb83d7FA705c98B54A0",
-        "ProductsNFT": "0x6633D58054A80249cC9178E73D4F4373ADd76Ae4"
-      }
+      "ENSRegistry": "0xF3Edea6Db8495E88e0C714B3e01b62b19CE29836",
+      "BaseRegistrarImplementation": "0x07f8e59193F7f65fdBEBD17125d32Cb007B4Fd24",
+      "ReverseRegistrar": "0x696174B3fBFE17bF227CF27A528D58743B62b635",
+      "StaticMetadataService": "0xBBCAe3aEd9c932aFB3d06e7B054f3F86Ce796841",
+      "NameWrapper": "0x4B89c53f3Abd80836b89871856b634c3a88d2C38",
+      "PublicResolver": "0xd85d3B2b9704AD0A77ad831e7b02F3511f0dBba6",
+      "SimplePriceOracle": "0x65667FD7a2C7Dc8d5fA9CE2CB7C4769487AbC8AD",
+      "ETHRegistrarController": "0xc042F10f20a23d1E90f54C6B81032e62087cef23",
+      "GlobalRegistrarController": "0xE9D47b49C5dEc4280cAD390BfE740feAAf7F6893",
+      "ProvisionRegistry": "0xDc2B165B499F84b1603cf94462b3E77B810e2dB9",
+      "SignatureVerifier": "0x7673a6469d02ACb554857F4c1fe6Eb23AB8D4210",
+      "SecondLevelInteractor": "0xe708035B3bc96711be363d566d65f172cB079Ae4",
+      "ArnaconResolver": "0x4447e763eB9F4A8EC5FBdD64f5400ff1B146CEC5",
+      "SecondLevelController": "0xC20B18af4A6735FF96F62d547565241D0D439dEA",
+      "EncryptionRegistry": "0x8fc3057e8F00B14Ea295a42b1ADe667E68f17D12"
+    }
 };
 
 module.exports = { sapphireTestnet };
